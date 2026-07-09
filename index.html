@@ -78,7 +78,7 @@
             </div>
         </div>
 
-        <div id="sectionWorkspace" class="row g-4 d-none">
+        <div id="sectionWorkspace" class="row g-4 d-none position-relative">
             <div id="viewerContainer" class="col-lg-8 d-none">
                 <div class="card shadow-sm border-0 bg-light p-2 h-100 min-vh-75 d-flex align-items-center justify-content-center overflow-auto">
                     <img id="imageViewer" src="" alt="Uploaded source" class="img-fluid rounded shadow-sm d-none">
@@ -103,11 +103,14 @@
                         +1 Count
                     </button>
 
-                    <div class="d-flex gap-3 w-100">
-                        <button id="btnStop" class="btn btn-outline-danger w-50 py-2.5 fw-medium">
+                    <div class="d-flex gap-2 w-100">
+                        <button id="btnStop" class="btn btn-outline-danger w-100 py-2.5 fw-medium">
                             <i class="bi bi-stop-fill"></i> Stop
                         </button>
-                        <button id="btnReset" class="btn btn-outline-primary w-50 py-2.5 fw-medium">
+                        <button id="btnPause" class="btn btn-outline-warning w-100 py-2.5 fw-medium">
+                            <i class="bi bi-pause-fill"></i> Pause
+                        </button>
+                        <button id="btnReset" class="btn btn-outline-primary w-100 py-2.5 fw-medium">
                             <i class="bi bi-arrow-counterclockwise"></i> Reset
                         </button>
                     </div>

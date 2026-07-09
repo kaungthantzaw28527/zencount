@@ -10,6 +10,7 @@ class ZenCountModel {
         this.elapsedTime = 0; // Duration in milliseconds
         this.timerIntervalId = null;
         this.isActive = false;
+        this.isPaused = false;
         this.uploadedFileUrl = null;
         this.uploadedFileType = null; // 'pdf' or 'image'
     }
@@ -25,6 +26,7 @@ class ZenCountModel {
 
     stopCounter() {
         this.isActive = false;
+        this.isPaused = false;
         if (this.timerIntervalId) {
             clearInterval(this.timerIntervalId);
             this.timerIntervalId = null;

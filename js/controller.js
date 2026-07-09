@@ -24,6 +24,7 @@ class ZenCountController {
         // Core Workspace Interface Controls
         document.getElementById('btnCountIncrement').addEventListener('click', () => this.handleIncrement());
         document.getElementById('btnStop').addEventListener('click', () => this.handleStop());
+        document.getElementById('btnPause').addEventListener('click', () => this.handlePause());
         document.getElementById('btnReset').addEventListener('click', () => this.handleReset());
         this.view.backBtn.addEventListener('click', () => this.handleBack());
     }
@@ -52,27 +53,55 @@ class ZenCountController {
     }
 
     handleIncrement() {
-        if (this.model.startTime !== null && !this.model.isActive) {
+        if ((this.model.startTime !== null && !this.model.isActive) || this.model.isPaused) {
             return; 
         }
 
         this.model.incrementCounter();
         if (!this.model.timerIntervalId) {
+            this.model.startTime = Date.now() - this.model.elapsedTime;
+            this.model.isActive = true;
             this.model.timerIntervalId = setInterval(() => this.updateTimerLogic(), 100);
         }
         this.view.updateMetrics(this.model.getFormattedCount(), this.formatTime(this.model.elapsedTime), "Counting...");
     }
 
     updateTimerLogic() {
-        if (this.model.isActive) {
+        if (this.model.isActive && !this.model.isPaused) {
             this.model.elapsedTime = Date.now() - this.model.startTime;
+            this.view.updateMetrics(this.model.getFormattedCount(), this.formatTime(this.model.elapsedTime), "Counting...");
+        }
+    }
+
+
+    handlePause() {
+        if (this.model.startTime === null) return;
+
+        if (!this.model.isPaused) {
+            // [Pause Action]
+            this.model.isPaused = true;
+            this.model.isActive = false;
+            if (this.model.timerIntervalId) {
+                clearInterval(this.model.timerIntervalId);
+                this.model.timerIntervalId = null;
+            }
+            this.view.setPauseUI(true);
+            this.view.updateMetrics(this.model.getFormattedCount(), this.formatTime(this.model.elapsedTime), "Session Paused");
+        } else {
+            // [Resume Action]
+            this.model.isPaused = false;
+            this.model.isActive = true;
+            this.model.startTime = Date.now() - this.model.elapsedTime;
+            this.model.timerIntervalId = setInterval(() => this.updateTimerLogic(), 100);
+            this.view.setPauseUI(false);
             this.view.updateMetrics(this.model.getFormattedCount(), this.formatTime(this.model.elapsedTime), "Counting...");
         }
     }
 
     handleStop() {
         this.model.stopCounter();
-        this.view.updateMetrics(this.model.getFormattedCount(), this.formatTime(this.model.elapsedTime), "Session Paused");
+        this.view.setPauseUI(false);
+        this.view.updateMetrics(this.model.getFormattedCount(), this.formatTime(this.model.elapsedTime), "Session Stopped");
         document.getElementById('btnCountIncrement').classList.add('opacity-50');
     }
 
@@ -83,8 +112,15 @@ class ZenCountController {
         this.model.resetState();
         this.model.uploadedFileUrl = savedUrl;
         this.model.uploadedFileType = savedType;
+        
+        this.view.resetUI(); 
+        
+        if (savedUrl) {
+            this.view.renderWorkspace('split', savedUrl, savedType);
+        } else {
+            this.view.renderWorkspace('manual');
+        }
         this.view.updateMetrics("0000", "00:00:00", "Waiting...");
-        document.getElementById('btnCountIncrement').classList.remove('opacity-50');
     }
 
     handleBack() {

@@ -71,9 +71,77 @@ body {
 }
 
 /* Responsive Custom Viewports */
+/* Mobile Devices Responsive Layout (Screen သေးသော View များအတွက်) */
 @media (max-width: 991.98px) {
+    /* 1. Workspace တစ်ခုလုံးကို scrolling အဆင်ပြေအောင် ညှိခြင်း */
+    #sectionWorkspace {
+        margin-bottom: 220px; /* အောက်ခြေ counter box နဲ့ မကွယ်စေရန် space ချန်ခြင်း */
+    }
+
+    /* 2. စာအုပ် သို့မဟုတ် ပုံပြမည့် viewer container ကို screen အပြည့်နီးပါး ဖွင့်ပေးခြင်း */
     #viewerContainer {
-        min-height: 450px;
-        margin-bottom: 1.5rem;
+        display: block !important;
+        width: 100% !important;
+        height: calc(100vh - 320px) !important; 
+        min-height: 400px !important;
+        margin-bottom: 1rem;
+    }
+
+    #pdfViewer, #imageViewer {
+        height: 100% !important;
+        min-height: 100% !important;
+    }
+
+    /* 3. Counter Box ကို Screen အောက်ခြေ၌ အသေ (Fixed/Sticky) ပုံစံဖြင့် ထားရှိခြင်း */
+    #counterContainer {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        z-index: 1040;
+        padding: 0 !important;
+        background-color: transparent;
+    }
+
+    #counterContainer .card {
+        max-width: 100% !important;
+        border-radius: 20px 20px 0 0 !important; /* အပေါ်ထောင့်နှစ်ဖက်ကို ကွေးကွေးလေးလုပ်ခြင်း */
+        box-shadow: 0 -0.5rem 2rem rgba(0, 0, 0, 0.15) !important; /* အပေါ်ဘက်ကို shadow ထိုးခြင်း */
+        padding: 1.5rem !important;
+    }
+
+    /* 4. ဖုန်းပေါ်တွင် နေရာချွေတာရန် Element မန်ဘာများကို ကျစ်ကျစ်လျစ်လျစ် ပြုလုပ်ခြင်း */
+    #counterContainer h4 {
+        display: none; /* Counter ဆိုတဲ့ စာသားခေါင်းစဉ်ကို ဖျောက်ထားခြင်း */
+    }
+
+    #counterContainer .counter-display {
+        margin-top: 0 !important;
+        margin-bottom: 0.5rem !important;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 15px;
+    }
+
+    #txtCounter {
+        font-size: 2.5rem !important; /* ကောင်တာဂဏန်းကို သင့်တော်ရုံ လျှော့ချခြင်း */
+    }
+
+    #txtStatus {
+        font-size: 0.8rem;
+        margin-top: 0 !important;
+    }
+
+    .timer-display {
+        font-size: 1.1rem !important;
+        margin-bottom: 0.75rem !important;
+    }
+
+    #btnCountIncrement {
+        padding-top: 0.6rem !important;
+        padding-bottom: 0.6rem !important;
+        font-size: 1.3rem !important;
+        margin-bottom: 0.75rem !important;
     }
 }

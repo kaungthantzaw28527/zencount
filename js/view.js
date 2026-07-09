@@ -15,6 +15,11 @@ class ZenCountView {
         this.imageViewer = document.getElementById('imageViewer');
         this.pdfViewer = document.getElementById('pdfViewer');
         
+        this.btnIncrement = document.getElementById('btnCountIncrement');
+        this.btnStop = document.getElementById('btnStop');
+        this.btnPause = document.getElementById('btnPause');
+        this.btnReset = document.getElementById('btnReset');
+        
         // Toast Elements
         this.toastEl = document.getElementById('validationToast');
         this.toastMsg = document.getElementById('toastMessage');
@@ -58,6 +63,40 @@ class ZenCountView {
         }
     }
 
+    setPauseUI(isPaused) {
+        if (isPaused) {
+
+            this.btnPause.innerHTML = `<i class="bi bi-play-fill"></i> Resume`;
+            if (this.btnPause.classList.contains('btn-outline-warning')) {
+                this.btnPause.classList.replace('btn-outline-warning', 'btn-warning');
+            }
+            
+            this.btnStop.disabled = true;
+            this.btnReset.disabled = true;
+            this.btnIncrement.disabled = true;
+            this.btnStop.classList.add('opacity-50');
+            this.btnReset.classList.add('opacity-50');
+            this.btnIncrement.classList.add('opacity-50');
+        } else {
+
+            this.btnPause.innerHTML = `<i class="bi bi-pause-fill"></i> Pause`;
+            if (this.btnPause.classList.contains('btn-warning')) {
+                this.btnPause.classList.replace('btn-warning', 'btn-outline-warning');
+            }
+            
+            this.btnStop.disabled = true;
+            this.btnPause.disabled = true;
+            this.btnIncrement.disabled = true;
+            this.btnReset.disabled = false;
+            
+            this.btnStop.classList.add('opacity-50');
+            this.btnPause.classList.add('opacity-50');
+            this.btnIncrement.classList.add('opacity-50');
+            this.btnReset.classList.remove('opacity-50');
+        }
+    }
+
+
     resetUI() {
         this.dashboard.classList.remove('d-none');
         this.workspace.classList.add('d-none');
@@ -68,6 +107,16 @@ class ZenCountView {
         this.txtStatus.innerText = "Waiting...";
         this.pdfViewer.src = "";
         this.imageViewer.src = "";
+        
+        this.btnStop.disabled = false;
+        this.btnPause.disabled = false;
+        this.btnIncrement.disabled = false;
+        this.btnReset.disabled = false;
+        
+        this.btnStop.classList.remove('opacity-50');
+        this.btnPause.classList.remove('opacity-50');
+        this.btnIncrement.classList.remove('opacity-50');
+        this.btnReset.classList.remove('opacity-50');
     }
 
     updateMetrics(countStr, timeStr, statusText) {

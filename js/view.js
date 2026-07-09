@@ -48,13 +48,21 @@ class ZenCountView {
             this.counterContainer.classList.replace('col-lg-12', 'col-lg-4');
             
             if (fileType === 'pdf') {
-                this.pdfViewer.data = fileUrl; 
-                this.pdfViewer.classList.remove('d-none');
                 this.imageViewer.classList.add('d-none');
+                
+                const pdfContainer = document.getElementById('pdfViewer');
+                pdfContainer.classList.remove('d-none');
+
+                // 💡 [အဓိကပြင်ဆင်ချက်] PDFObject ကို သုံးပြီး PDF.js Online Viewer ထဲသို့ တွန်းပို့ကာ ဖုန်းပေါ်တွင်ပါ Scroll ရစေခြင်း
+                PDFObject.embed(fileUrl, "#pdfViewer", {
+                    forcePDFJS: true, // မိုဘိုင်းလ်ဖုန်း browser တိုင်းတွင် PDF.js သုံးရန် force လုပ်ခြင်း
+                    PDFJS_URL: "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/web/viewer.html"
+                });
+
             } else {
                 this.imageViewer.src = fileUrl;
                 this.imageViewer.classList.remove('d-none');
-                this.pdfViewer.classList.add('d-none');
+                document.getElementById('pdfViewer').classList.add('d-none');
             }
         } else {
             this.subTitleMode.innerText = "Manual Counting";
@@ -106,6 +114,7 @@ class ZenCountView {
         this.txtTimer.innerText = "00:00:00";
         this.txtStatus.innerText = "Waiting...";
         this.pdfViewer.src = "";
+        document.getElementById('pdfViewer').innerHTML = ""; 
         this.imageViewer.src = "";
         
         this.btnStop.disabled = false;

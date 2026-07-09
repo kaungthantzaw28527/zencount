@@ -71,28 +71,33 @@ body {
 }
 
 /* Responsive Custom Viewports */
-/* Mobile Devices Responsive Layout (Screen သေးသော View များအတွက်) */
 @media (max-width: 991.98px) {
-    /* 1. Workspace တစ်ခုလုံးကို scrolling အဆင်ပြေအောင် ညှိခြင်း */
     #sectionWorkspace {
-        margin-bottom: 220px; /* အောက်ခြေ counter box နဲ့ မကွယ်စေရန် space ချန်ခြင်း */
+        margin-bottom: 220px;
     }
 
-    /* 2. စာအုပ် သို့မဟုတ် ပုံပြမည့် viewer container ကို screen အပြည့်နီးပါး ဖွင့်ပေးခြင်း */
     #viewerContainer {
         display: block !important;
         width: 100% !important;
         height: calc(100vh - 320px) !important; 
         min-height: 400px !important;
         margin-bottom: 1rem;
+        
+        overflow-y: auto !important;
+        -webkit-overflow-scrolling: touch !important;
     }
 
-    #pdfViewer, #imageViewer {
+    #pdfViewer {
+        width: 100% !important;
+        height: 100% !important;
+        overflow: auto !important;
+    }
+
+    #imageViewer {
         height: 100% !important;
         min-height: 100% !important;
     }
 
-    /* 3. Counter Box ကို Screen အောက်ခြေ၌ အသေ (Fixed/Sticky) ပုံစံဖြင့် ထားရှိခြင်း */
     #counterContainer {
         position: fixed;
         bottom: 0;
@@ -105,14 +110,13 @@ body {
 
     #counterContainer .card {
         max-width: 100% !important;
-        border-radius: 20px 20px 0 0 !important; /* အပေါ်ထောင့်နှစ်ဖက်ကို ကွေးကွေးလေးလုပ်ခြင်း */
-        box-shadow: 0 -0.5rem 2rem rgba(0, 0, 0, 0.15) !important; /* အပေါ်ဘက်ကို shadow ထိုးခြင်း */
+        border-radius: 20px 20px 0 0 !important;
+        box-shadow: 0 -0.5rem 2rem rgba(0, 0, 0, 0.15) !important;
         padding: 1.5rem !important;
     }
 
-    /* 4. ဖုန်းပေါ်တွင် နေရာချွေတာရန် Element မန်ဘာများကို ကျစ်ကျစ်လျစ်လျစ် ပြုလုပ်ခြင်း */
     #counterContainer h4 {
-        display: none; /* Counter ဆိုတဲ့ စာသားခေါင်းစဉ်ကို ဖျောက်ထားခြင်း */
+        display: none;
     }
 
     #counterContainer .counter-display {
@@ -125,7 +129,7 @@ body {
     }
 
     #txtCounter {
-        font-size: 2.5rem !important; /* ကောင်တာဂဏန်းကို သင့်တော်ရုံ လျှော့ချခြင်း */
+        font-size: 2.5rem !important;
     }
 
     #txtStatus {

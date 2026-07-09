@@ -113,8 +113,9 @@ class ZenCountView {
         this.txtCounter.innerText = "0000";
         this.txtTimer.innerText = "00:00:00";
         this.txtStatus.innerText = "Waiting...";
+        
+        // 💡 iframe သို့ ပြန်ပြောင်းသွားသဖြင့် src ကိုသာ ရှင်းပေးရန် လိုအပ်ပါသည်
         this.pdfViewer.src = "";
-        document.getElementById('pdfViewer').innerHTML = ""; 
         this.imageViewer.src = "";
         
         this.btnStop.disabled = false;
@@ -126,6 +127,8 @@ class ZenCountView {
         this.btnPause.classList.remove('opacity-50');
         this.btnIncrement.classList.remove('opacity-50');
         this.btnReset.classList.remove('opacity-50');
+        
+        this.setPauseUI(false);
     }
 
     updateMetrics(countStr, timeStr, statusText) {

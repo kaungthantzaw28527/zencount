@@ -79,25 +79,21 @@ body {
     #viewerContainer {
         display: block !important;
         width: 100% !important;
-        height: calc(100vh - 320px) !important; 
-        min-height: 400px !important;
+        height: calc(100vh - 340px) !important;
+        min-height: 420px !important;
         margin-bottom: 1rem;
         
-        overflow: auto !important;
+        overflow-y: scroll !important;
+        overflow-x: auto !important;
         -webkit-overflow-scrolling: touch !important;
+        position: relative;
     }
 
     #pdfViewer {
         width: 100% !important;
         height: 100% !important;
-        min-height: 100% !important;
         display: block !important;
-    }
-    
-    #pdfViewer iframe {
-        width: 100% !important;
-        height: 100% !important;
-        border: none !important;
+        pointer-events: auto !important;
     }
 
     #imageViewer {

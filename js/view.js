@@ -99,17 +99,11 @@ class ZenCountView {
     }
 
 
-    resetUI() {
-        this.dashboard.classList.remove('d-none');
-        this.workspace.classList.add('d-none');
-        this.backBtn.classList.add('d-none');
-        this.subTitleMode.classList.add('d-none');
+resetUI() {
+        
         this.txtCounter.innerText = "0000";
         this.txtTimer.innerText = "00:00:00";
         this.txtStatus.innerText = "Waiting...";
-        
-        this.pdfViewer.removeAttribute('src');
-        this.imageViewer.src = "";
         
         this.btnStop.disabled = false;
         this.btnPause.disabled = false;

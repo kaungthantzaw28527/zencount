@@ -105,7 +105,7 @@ class ZenCountController {
         document.getElementById('btnCountIncrement').classList.add('opacity-50');
     }
 
-    handleReset() {
+handleReset() {
         const savedUrl = this.model.uploadedFileUrl;
         const savedType = this.model.uploadedFileType;
         this.model.stopCounter();
@@ -113,14 +113,17 @@ class ZenCountController {
         this.model.uploadedFileUrl = savedUrl;
         this.model.uploadedFileType = savedType;
         
-        this.view.resetUI(); 
-        
+        // 💡 [ပြင်ဆင်ချက်] renderWorkspace ကို အရင်မောင်းနှင်ပါသည်
         if (savedUrl) {
             this.view.renderWorkspace('split', savedUrl, savedType);
         } else {
             this.view.renderWorkspace('manual');
         }
+        
         this.view.updateMetrics("0000", "00:00:00", "Waiting...");
+
+        // 💡 [ပြင်ဆင်ချက်] အားလုံးပြီးမှ ခလုတ်တွေကို အလင်းပြန်ဖွင့်ပေးမည့် resetUI() ကို နောက်ဆုံးမှ ခေါ်ပါသည်
+        this.view.resetUI(); 
     }
 
     handleBack() {

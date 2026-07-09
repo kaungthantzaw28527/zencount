@@ -83,13 +83,17 @@ body {
         min-height: 400px !important;
         margin-bottom: 1rem;
         
-        overflow-y: auto !important;
+        /* Touch Scroll အဆင်ပြေပြေ ဆွဲနိုင်ရန် */
+        overflow: auto !important;
         -webkit-overflow-scrolling: touch !important;
     }
 
+    /* 💡 Object Tag အတွက် Mobile Browser များတွင် Scroll သေချာပေါက် ရစေရန် အချောသတ်ခြင်း */
     #pdfViewer {
         width: 100% !important;
         height: 100% !important;
+        min-height: 100% !important;
+        display: block !important;
         overflow: auto !important;
     }
 

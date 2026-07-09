@@ -24,8 +24,10 @@ zencount/
 ├── index.html               # View: UI Layout & Structure (Bootstrap 5)
 ├── css/
 │   └── style.css            # Custom Styling & Colors (Zen Design)
-└── js/
-    ├── app.js               # Main Entry & App Initialization
-    ├── model.js             # Model: Core Data Logic (Count, Timer, State)
-    ├── view.js              # View Handler: DOM Manipulation & Alerts
-    └── controller.js        # Controller: Event Listeners & Business Logic
+├── js/
+│   ├── app.js               # Main Entry & App Initialization
+│   ├── model.js             # Model: Core Data Logic (Count, Timer, State)
+│   ├── view.js              # View Handler: DOM Manipulation & Alerts
+│   └── controller.js        # Controller: Event Listeners & Business Logic
+└── img/
+    └── zencount.ico          # App Identity: Website Browser Tab Icon (Favicon)

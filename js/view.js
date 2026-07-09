@@ -48,7 +48,7 @@ class ZenCountView {
             this.counterContainer.classList.replace('col-lg-12', 'col-lg-4');
             
             if (fileType === 'pdf') {
-                this.pdfViewer.src = fileUrl;
+                this.pdfViewer.src = `https://docs.google.com/gview?url=${encodeURIComponent(fileUrl)}&embedded=true`;
                 this.pdfViewer.classList.remove('d-none');
                 this.imageViewer.classList.add('d-none');
             } else {

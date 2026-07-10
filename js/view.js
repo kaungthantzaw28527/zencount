@@ -1,126 +1,135 @@
-class ZenCountView {
-    constructor() {
-        // UI Screens Elements
-        this.dashboard = document.getElementById('sectionDashboard');
-        this.workspace = document.getElementById('sectionWorkspace');
-        this.viewerContainer = document.getElementById('viewerContainer');
-        this.counterContainer = document.getElementById('counterContainer');
-        
-        // Interactive Elements
-        this.backBtn = document.getElementById('btnBack');
-        this.subTitleMode = document.getElementById('subTitleMode');
-        this.txtCounter = document.getElementById('txtCounter');
-        this.txtTimer = document.getElementById('txtTimer');
-        this.txtStatus = document.getElementById('txtStatus');
-        this.imageViewer = document.getElementById('imageViewer');
-        this.pdfViewer = document.getElementById('pdfViewer');
-        
-        this.btnIncrement = document.getElementById('btnCountIncrement');
-        this.btnStop = document.getElementById('btnStop');
-        this.btnPause = document.getElementById('btnPause');
-        this.btnReset = document.getElementById('btnReset');
-        
-        // Toast Elements
-        this.toastEl = document.getElementById('validationToast');
-        this.toastMsg = document.getElementById('toastMessage');
-        this.bsToast = new bootstrap.Toast(this.toastEl);
+/* =========================================================
+   ZenCount — View
+   All DOM reads/writes live here. Controller calls into this
+   module; this module never calls back into the model.
+========================================================= */
+
+(function (global) {
+  "use strict";
+
+  var SCREENS = ["screen-home", "screen-file-count", "screen-manual-count"];
+
+  function pad2(n) { return String(n).padStart(2, "0"); }
+
+  function formatTimer(totalSeconds) {
+    var h = Math.floor(totalSeconds / 3600);
+    var m = Math.floor((totalSeconds % 3600) / 60);
+    var s = totalSeconds % 60;
+    return pad2(h) + ":" + pad2(m) + ":" + pad2(s);
+  }
+
+  function formatCount(n) {
+    return String(n).padStart(4, "0");
+  }
+
+  function statusLabel(state) {
+    switch (state) {
+      case "running": return "Counting…";
+      case "paused": return "Paused";
+      case "stopped": return "Stopped";
+      default: return "Waiting…";
     }
+  }
 
-    showToast(message, isDanger = true) {
-        this.toastMsg.innerText = message;
-        if(isDanger) {
-            this.toastEl.classList.replace('bg-success', 'bg-danger');
-        } else {
-            this.toastEl.classList.replace('bg-danger', 'bg-success');
-        }
-        this.bsToast.show();
+  var View = {
+    formatTimer: formatTimer,
+    formatCount: formatCount,
+
+    showScreen: function (id) {
+      for (var i = 0; i < SCREENS.length; i++) {
+        var el = document.getElementById(SCREENS[i]);
+        if (el) el.classList.toggle("active", SCREENS[i] === id);
+      }
+      window.scrollTo(0, 0);
+    },
+
+    // Renders count/timer/status plus the enabled/disabled state of the
+    // control buttons for one counting session (file-count or manual).
+    renderCounter: function (prefix, snapshot) {
+      var countEl = document.getElementById(prefix + "-count");
+      var statusEl = document.getElementById(prefix + "-status");
+      var timerEl = document.getElementById(prefix + "-timer");
+      var countBtn = document.getElementById(prefix + "-count-btn");
+      var pauseBtn = document.getElementById(prefix + "-pause-btn");
+      var stopBtn = document.getElementById(prefix + "-stop-btn");
+      var resetBtn = document.getElementById(prefix + "-reset-btn");
+
+      if (countEl) countEl.textContent = formatCount(snapshot.count);
+      if (statusEl) statusEl.textContent = statusLabel(snapshot.state);
+      if (timerEl) timerEl.textContent = formatTimer(snapshot.seconds);
+
+      var isPaused = snapshot.state === "paused";
+      var isStopped = snapshot.state === "stopped";
+
+      if (countBtn) countBtn.disabled = isPaused || isStopped;
+      if (stopBtn) stopBtn.disabled = isPaused || isStopped || snapshot.state === "idle";
+      if (resetBtn) resetBtn.disabled = false; // Reset always available
+
+      if (pauseBtn) {
+        pauseBtn.disabled = isStopped || snapshot.state === "idle";
+        var label = isPaused ? "Resume" : "Pause";
+        var icon = isPaused
+          ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="6 3 20 12 6 21 6 3"/></svg>'
+          : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>';
+        pauseBtn.innerHTML = icon + " " + label;
+      }
+    },
+
+    // Dims count/pause/stop while paused or stopped (per spec: pausing
+    // fades out the other controls; resuming brings them back).
+    setControlsDimmed: function (prefix, dimmed) {
+      var row = document.querySelector("#" + (prefix === "fc" ? "screen-file-count" : "screen-manual-count") + " .btn-row");
+      if (row) row.classList.toggle("dimmed", dimmed);
+    },
+
+    setFileName: function (name) {
+      var el = document.getElementById("file-name-label");
+      if (el) el.textContent = name;
+    },
+
+    renderFilePreview: function (file, objectUrl) {
+      var body = document.getElementById("file-viewer-body");
+      if (!body) return;
+      body.innerHTML = "";
+
+      if (file.type === "application/pdf" || /\.pdf$/i.test(file.name)) {
+        var embed = document.createElement("embed");
+        embed.src = objectUrl;
+        embed.type = "application/pdf";
+        body.appendChild(embed);
+      } else {
+        var img = document.createElement("img");
+        img.src = objectUrl;
+        img.alt = file.name;
+        body.appendChild(img);
+      }
+    },
+
+    clearFilePreview: function () {
+      var body = document.getElementById("file-viewer-body");
+      if (body) body.innerHTML = "";
+    },
+
+    toast: function (message, type) {
+      var stack = document.getElementById("toast-stack");
+      if (!stack) return;
+      var el = document.createElement("div");
+      el.className = "zen-toast zen-toast-" + (type || "error");
+      el.textContent = message; // textContent only — never innerHTML with user input
+      stack.appendChild(el);
+      requestAnimationFrame(function () { el.classList.add("show"); });
+      setTimeout(function () {
+        el.classList.remove("show");
+        setTimeout(function () { el.remove(); }, 250);
+      }, 3200);
+    },
+
+    setDropzoneActive: function (active) {
+      var dz = document.getElementById("dropzone");
+      if (dz) dz.classList.toggle("dragover", active);
     }
+  };
 
-    renderWorkspace(mode, fileUrl = null, fileType = null) {
-        this.dashboard.classList.add('d-none');
-        this.workspace.classList.remove('d-none');
-        this.backBtn.classList.remove('d-none');
-        this.subTitleMode.classList.remove('d-none');
-
-        if (mode === 'split') {
-            this.subTitleMode.innerText = "Count Using PDF / Image";
-            this.viewerContainer.classList.remove('d-none');
-            this.counterContainer.classList.replace('col-lg-12', 'col-lg-4');
-            
-            if (fileType === 'pdf') {
-                this.imageViewer.classList.add('d-none');
-                
-                // 💡 [အဓိကပြင်ဆင်ချက်] src ကို attribute အနေနဲ့ သေချာအောင် ရိုက်ထည့်ပြီး d-none ဖြုတ်ခြင်း
-                this.pdfViewer.setAttribute('src', fileUrl);
-                this.pdfViewer.classList.remove('d-none');
-            } else {
-                this.imageViewer.src = fileUrl;
-                this.imageViewer.classList.remove('d-none');
-                this.pdfViewer.classList.add('d-none');
-            }
-        } else {
-            this.subTitleMode.innerText = "Manual Counting";
-            this.viewerContainer.classList.add('d-none');
-            this.counterContainer.classList.replace('col-lg-4', 'col-lg-12');
-        }
-    }
-
-    setPauseUI(isPaused) {
-        if (isPaused) {
-
-            this.btnPause.innerHTML = `<i class="bi bi-play-fill"></i> Resume`;
-            if (this.btnPause.classList.contains('btn-outline-warning')) {
-                this.btnPause.classList.replace('btn-outline-warning', 'btn-warning');
-            }
-            
-            this.btnStop.disabled = true;
-            this.btnReset.disabled = true;
-            this.btnIncrement.disabled = true;
-            this.btnStop.classList.add('opacity-50');
-            this.btnReset.classList.add('opacity-50');
-            this.btnIncrement.classList.add('opacity-50');
-        } else {
-
-            this.btnPause.innerHTML = `<i class="bi bi-pause-fill"></i> Pause`;
-            if (this.btnPause.classList.contains('btn-warning')) {
-                this.btnPause.classList.replace('btn-warning', 'btn-outline-warning');
-            }
-            
-            this.btnStop.disabled = true;
-            this.btnPause.disabled = true;
-            this.btnIncrement.disabled = true;
-            this.btnReset.disabled = false;
-            
-            this.btnStop.classList.add('opacity-50');
-            this.btnPause.classList.add('opacity-50');
-            this.btnIncrement.classList.add('opacity-50');
-            this.btnReset.classList.remove('opacity-50');
-        }
-    }
-
-
-resetUI() {
-        
-        this.txtCounter.innerText = "0000";
-        this.txtTimer.innerText = "00:00:00";
-        this.txtStatus.innerText = "Waiting...";
-        
-        this.btnStop.disabled = false;
-        this.btnPause.disabled = false;
-        this.btnIncrement.disabled = false;
-        this.btnReset.disabled = false;
-        
-        this.btnStop.classList.remove('opacity-50');
-        this.btnPause.classList.remove('opacity-50');
-        this.btnIncrement.classList.remove('opacity-50');
-        this.btnReset.classList.remove('opacity-50');
-        
-        this.setPauseUI(false);
-    }
-
-    updateMetrics(countStr, timeStr, statusText) {
-        this.txtCounter.innerText = countStr;
-        this.txtTimer.innerText = timeStr;
-        this.txtStatus.innerText = statusText;
-    }
-}
+  global.ZenCount = global.ZenCount || {};
+  global.ZenCount.View = View;
+})(window);
